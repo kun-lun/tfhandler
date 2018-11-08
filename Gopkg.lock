@@ -11,11 +11,11 @@
 
 [[projects]]
   branch = "draft"
-  digest = "1:e3594f5266fb72cae362ae30ba351ec35c46589619470a1304de6b62d3867e4e"
+  digest = "1:4a16f213e9fa027086811bfd18307880c02194e8c23887f43cda654d0686a7b2"
   name = "github.com/kun-lun/artifacts"
   packages = ["pkg/apis"]
   pruneopts = "UT"
-  revision = "0da64baea02b3ffe8cb5831e22826c6762e4478d"
+  revision = "069432f4ef792a64db6299f52370fd24d38b788d"
 
 [[projects]]
   branch = "draft"
