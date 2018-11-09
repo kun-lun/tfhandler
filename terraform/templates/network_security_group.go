@@ -2,17 +2,17 @@ package templates
 
 import artifacts "github.com/kun-lun/artifacts/pkg/apis"
 
-var networkSecurityGroupTF = []byte(`
-  resource "azurerm_network_security_group" "{{.nsgName}}" {
+var networkSecurityGroupTemplate = []byte(`
+resource "azurerm_network_security_group" "{{.nsgName}}" {
 	name                = "${var.env_name}-{{.nsgName}}"
 	location            = "${var.location}"
-	resource_group_name = "${var.resource_group_name}"
-  }
+	resource_group_name = "${azurerm_resource_group.kunlun_resource_group.name}"
+}
 
 `)
 
-var networkSecurityRuleTF = []byte(`
-  resource "azurerm_network_security_rule" "{{.nsrName}}" {
+var networkSecurityRuleTemplate = []byte(`
+resource "azurerm_network_security_rule" "{{.nsrName}}" {
 	name                        = "{{.nsrName}}"
 	priority                    = "${var.{{.nsrName}}_ansr_priority}"
 	direction                   = "${var.{{.nsrName}}_ansr_direction}"
@@ -22,29 +22,21 @@ var networkSecurityRuleTF = []byte(`
 	destination_port_range      = "${var.{{.nsrName}}_ansr_destination_port_range}"
 	source_address_prefix       = "${var.{{.nsrName}}_ansr_source_address_prefix}"
 	destination_address_prefix  = "${var.{{.nsrName}}_ansr_destination_address_prefix}"
-	resource_group_name         = "${var.resource_group_name}"
+	resource_group_name         = "${azurerm_resource_group.kunlun_resource_group.name}"
 	network_security_group_name = "${azurerm_network_security_group.{{.nsgName}}.name}"
-  }
+}
 
-  variable "{{.nsrName}}_ansr_priority" {}
-
-  variable "{{.nsrName}}_ansr_direction" {}
-
-  variable "{{.nsrName}}_ansr_access" {}
-
-  variable "{{.nsrName}}_ansr_protocol" {}
-
-  variable "{{.nsrName}}_ansr_source_port_range" {}
-
-  variable "{{.nsrName}}_ansr_destination_port_range" {}
-
-  variable "{{.nsrName}}_ansr_source_address_prefix" {}
-
-  variable "{{.nsrName}}_ansr_destination_address_prefix" {}
-
+variable "{{.nsrName}}_ansr_priority" {}
+variable "{{.nsrName}}_ansr_direction" {}
+variable "{{.nsrName}}_ansr_access" {}
+variable "{{.nsrName}}_ansr_protocol" {}
+variable "{{.nsrName}}_ansr_source_port_range" {}
+variable "{{.nsrName}}_ansr_destination_port_range" {}
+variable "{{.nsrName}}_ansr_source_address_prefix" {}
+variable "{{.nsrName}}_ansr_destination_address_prefix" {}
 `)
 
-var networkSecurityRuleTFVars = []byte(`
+var networkSecurityRuleInput = []byte(`
 {{.nsrName}}_ansr_priority = "{{.ansr_priority}}"
 {{.nsrName}}_ansr_direction = "{{.ansr_direction}}"
 {{.nsrName}}_ansr_access = "{{.ansr_access}}"
@@ -56,49 +48,49 @@ var networkSecurityRuleTFVars = []byte(`
 `)
 
 func NewNSGTemplate(nsg artifacts.NetworkSecurityGroup) (string, error) {
-	tf := ""
-	nsgTF, err := render(networkSecurityGroupTF, getNSGTFParams(nsg))
+	template := ""
+	nsgTemplate, err := render(networkSecurityGroupTemplate, buildNSGTemplateGoParams(nsg))
 	if err != nil {
 		return "", err
 	}
-	tf += nsgTF
+	template += nsgTemplate
 
 	for _, nsr := range nsg.NetworkSecurityRules {
-		nsrTF, err := render(networkSecurityRuleTF, getNSRTFParams(nsr, nsg.Name))
+		nsrTemplate, err := render(networkSecurityRuleTemplate, buildNSRTemplateGoParams(nsr, nsg.Name))
 		if err != nil {
 			return "", err
 		}
-		tf += nsrTF
+		template += nsrTemplate
 	}
-	return tf, nil
+	return template, err
 }
 
 func NewNSGInput(nsg artifacts.NetworkSecurityGroup) (string, error) {
-	tfvars := ""
+	input := ""
 	for _, nsr := range nsg.NetworkSecurityRules {
-		nsrVars, err := render(networkSecurityRuleTFVars, getNSRTFVarsParams(nsr))
+		nsrInput, err := render(networkSecurityRuleInput, buildNSRInputGoParams(nsr))
 		if err != nil {
 			return "", err
 		}
-		tfvars += nsrVars
+		input += nsrInput
 	}
-	return tfvars, nil
+	return input, nil
 }
 
-func getNSGTFParams(nsg artifacts.NetworkSecurityGroup) map[string]interface{} {
+func buildNSGTemplateGoParams(nsg artifacts.NetworkSecurityGroup) map[string]interface{} {
 	return map[string]interface{}{
 		"nsgName": nsg.Name,
 	}
 }
 
-func getNSRTFParams(nsr artifacts.NetworkSecurityRule, nsgName string) map[string]interface{} {
+func buildNSRTemplateGoParams(nsr artifacts.NetworkSecurityRule, nsgName string) map[string]interface{} {
 	return map[string]interface{}{
 		"nsgName": nsgName,
 		"nsrName": nsr.Name,
 	}
 }
 
-func getNSRTFVarsParams(nsr artifacts.NetworkSecurityRule) map[string]interface{} {
+func buildNSRInputGoParams(nsr artifacts.NetworkSecurityRule) map[string]interface{} {
 	return map[string]interface{}{
 		"nsrName":                         nsr.Name,
 		"ansr_priority":                   nsr.Priority,

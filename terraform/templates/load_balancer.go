@@ -6,15 +6,15 @@ var loadBalancerTF = []byte(`
 resource "azurerm_public_ip" "{{.lbName}}_public_ip" {
 	name                         = "${var.env_name}-{{.lbName}}-public-ip"
 	location                     = "${var.location}"
-	resource_group_name          = "${var.resource_group_name}"
+	resource_group_name          = "${azurerm_resource_group.kunlun_resource_group.name}"
 	public_ip_address_allocation = "static"
 	sku                          = "${var.{{.lbName}}_al_sku}"
-  }
+}
 
 resource "azurerm_lb" "{{.lbName}}" {
 	name                = "${var.env_name}-{{.lbName}}"
 	location            = "${var.location}"
-	resource_group_name = "${var.resource_group_name}"
+	resource_group_name = "${azurerm_resource_group.kunlun_resource_group.name}"
 	sku                 = "${var.{{.lbName}}_al_sku}"
 	frontend_ip_configuration {
 	  name                 = "{{.lbName}}-public-ip"
@@ -22,7 +22,7 @@ resource "azurerm_lb" "{{.lbName}}" {
 	}
   }
 
-  variable "{{.lbName}}_al_sku" {}
+variable "{{.lbName}}_al_sku" {}
 `)
 
 var loadBalancerTFVars = []byte(`
@@ -31,44 +31,42 @@ var loadBalancerTFVars = []byte(`
 
 var loadBalancerBackendAddressPoolTF = []byte(`
 resource "azurerm_lb_backend_address_pool" "{{.backendAddressPoolName}}" {
-	resource_group_name = "${var.resource_group_name}"
+	resource_group_name = "${azurerm_resource_group.kunlun_resource_group.name}"
 	loadbalancer_id     = "${azurerm_lb.{{.lbName}}.id}"
 	name                = "{{.lbName}}-{{.backendAddressPoolName}}"
-  }
+}
 `)
 
 var loadBalancerHealthProbeTF = []byte(`
 resource "azurerm_lb_probe" "{{.healthProbeName}}" {
-	resource_group_name = "${var.resource_group_name}"
+	resource_group_name = "${azurerm_resource_group.kunlun_resource_group.name}"
 	loadbalancer_id     = "${azurerm_lb.{{.lbName}}.id}"
 	name                = "{{.lbName}}-{{.healthProbeName}}"
 	protocol            = "${var.{{.healthProbeName}}_alp_protocol}"
-	{{if .haveRequestPath}}
+	{{if .haveRequestPath -}}
 	request_path        = "${var.{{.healthProbeName}}_alp_request_path}"
-	{{end}}
+	{{- end}}
 	port                = "${var.{{.healthProbeName}}_alp_port}"
-  }
+}
 
-  variable "{{.healthProbeName}}_alp_protocol" {}
-
-  {{if .haveRequestPath}}
-  variable "{{.healthProbeName}}_alp_request_path" {}
-
-  {{end}}
-  variable "{{.healthProbeName}}_alp_port" {}
+variable "{{.healthProbeName}}_alp_protocol" {}
+variable "{{.healthProbeName}}_alp_port" {}
+{{if .haveRequestPath -}}
+variable "{{.healthProbeName}}_alp_request_path" {}
+{{- end}}
 `)
 
 var loadBalancerHealthProbeTFVars = []byte(`
 {{.healthProbeName}}_alp_protocol = "{{.alp_protocol}}"
-{{if .haveRequestPath}}
-{{.healthProbeName}}_alp_request_path = "{{.alp_request_path}}"
-{{end}}
 {{.healthProbeName}}_alp_port = "{{.alp_port}}"
+{{if .haveRequestPath -}}
+{{.healthProbeName}}_alp_request_path = "{{.alp_request_path}}"
+{{- end}}
 `)
 
 var loadBalancerRuleTF = []byte(`
 resource "azurerm_lb_rule" "{{.ruleName}}" {
-	resource_group_name            = "${var.resource_group_name}"
+	resource_group_name            = "${azurerm_resource_group.kunlun_resource_group.name}"
 	loadbalancer_id                = "${azurerm_lb.{{.lbName}}.id}"
 	name                           = "{{.ruleName}}"
 	protocol                       = "${var.{{.ruleName}}_alr_protocol}"
@@ -77,13 +75,11 @@ resource "azurerm_lb_rule" "{{.ruleName}}" {
 	frontend_ip_configuration_name = "{{.lbName}}-public-ip"
 	backend_address_pool_id        = "${azurerm_lb_backend_address_pool.{{.backendAddressPoolName}}.id}"
 	probe_id                       = "${azurerm_lb_probe.{{.healthProbeName}}.id}"
-  }
+}
 
-  variable "{{.ruleName}}_alr_protocol" {}
-
-  variable "{{.ruleName}}_alr_frontend_port" {}
-
-  variable "{{.ruleName}}_alr_backend_port" {}
+variable "{{.ruleName}}_alr_protocol" {}
+variable "{{.ruleName}}_alr_frontend_port" {}
+variable "{{.ruleName}}_alr_backend_port" {}
 `)
 
 var loadBalancerRuleTFVars = []byte(`
