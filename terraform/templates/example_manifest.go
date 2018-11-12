@@ -150,6 +150,7 @@ vm_groups:
 
 vnets:
   - name: vnet-1
+    address_space: "10.0.0.0/16"
     subnets:
       - name: snet-1
         range: 10.0.0.0/24
