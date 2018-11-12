@@ -58,10 +58,7 @@ func (m Manager) ValidateVersion() error {
 
 func (m Manager) Setup(manifest artifacts.Manifest, kunlunState storage.State) error {
 	m.logger.Step("generating terraform template")
-	template, err := m.templateGenerator.GenerateTemplate(manifest, kunlunState)
-	if err != nil {
-		return fmt.Errorf("Template generator generate: %s", err)
-	}
+	template := m.templateGenerator.GenerateTemplate(manifest, kunlunState)
 
 	m.logger.Step("generating terraform variables")
 	input, err := m.inputGenerator.GenerateInput(manifest, kunlunState)
