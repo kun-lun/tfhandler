@@ -53,7 +53,7 @@ vm_groups:
   - name: web-servers
     count: 3
     sku: Standard_B1s
-    type: vmss # this can be vm or vmss
+    type: vm # this can be vm or vmss
     os_profile:
       admin_name: kunlun
       linux_configuration:
