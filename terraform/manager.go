@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/coreos/go-semver/semver"
-	"github.com/kun-lun/common/logger"
 	artifacts "github.com/kun-lun/artifacts/pkg/apis"
+	"github.com/kun-lun/common/logger"
 	"github.com/kun-lun/common/storage"
 )
 
