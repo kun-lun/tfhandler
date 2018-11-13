@@ -1,6 +1,9 @@
 package templates
 
-import artifacts "github.com/kun-lun/artifacts/pkg/apis"
+import (
+	"strings"
+	artifacts "github.com/kun-lun/artifacts/pkg/apis"
+)
 
 var vmTF = []byte(`
 resource "azurerm_availability_set" "{{.vmGroupName}}_as" {
@@ -198,6 +201,6 @@ func getVMTFVarsParams(vm artifacts.VMGroup) map[string]interface{} {
 		"avm_storage_data_disk_managed_disk_type":       vm.Storage.DataDisks[0].ManagedDiskType,
 		"avm_storage_data_disk_disk_size_gb":            vm.Storage.DataDisks[0].DiskSizeGB,
 		"avm_os_profile_admin_username":                 vm.OSProfile.AdminName,
-		"avm_os_profile_linux_config_ssh_keys_key_data": vm.OSProfile.LinuxConfiguration.SSH.PublicKeys[0],
+		"avm_os_profile_linux_config_ssh_keys_key_data": strings.TrimSpace(vm.OSProfile.LinuxConfiguration.SSH.PublicKeys[0]),
 	}
 }
