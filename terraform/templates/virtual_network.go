@@ -34,14 +34,14 @@ var subnetTFVars = []byte(`
 func NewVirtualNetworkTemplate(vnet artifacts.VirtualNetwork) (string, error) {
 	tf := ""
 
-	vnetTF, err := render(virtualNetworkTF, getVirtualNetworkTFParams(vnet))
+	vnetTF, err := helpers.Render(virtualNetworkTF, getVirtualNetworkTFParams(vnet))
 	if err != nil {
 		return "", err
 	}
 	tf += vnetTF
 
 	for _, snet := range vnet.Subnets {
-		snetTF, err := render(subnetTF, getSubnetTFParams(snet, vnet.Name))
+		snetTF, err := helpers.Render(subnetTF, getSubnetTFParams(snet, vnet.Name))
 		if err != nil {
 			return "", err
 		}
@@ -54,14 +54,14 @@ func NewVirtualNetworkTemplate(vnet artifacts.VirtualNetwork) (string, error) {
 func NewVirtualNetworkInput(vnet artifacts.VirtualNetwork) (string, error) {
 	tfvars := ""
 
-	vnetTFVars, err := render(virtualNetworkTFVars, getVirutalNetworkTFVarsParams(vnet))
+	vnetTFVars, err := helpers.Render(virtualNetworkTFVars, getVirutalNetworkTFVarsParams(vnet))
 	if err != nil {
 		return "", err
 	}
 	tfvars += vnetTFVars
 
 	for _, snet := range vnet.Subnets {
-		snetTFVars, err := render(subnetTFVars, getSubnetTFVarsParams(snet))
+		snetTFVars, err := helpers.Render(subnetTFVars, getSubnetTFVarsParams(snet))
 		if err != nil {
 			return "", err
 		}

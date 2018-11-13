@@ -147,13 +147,13 @@ output "vm_groups_{{.vmGroupName}}_networks_0_outputs_{{.index}}" {
 }`)
 
 func NewVMTemplate(vm artifacts.VMGroup) (string, error) {
-	template, err := render(vmTF, getVMTFParams(vm))
+	template, err := helpers.Render(vmTF, getVMTFParams(vm))
 	if err != nil {
 		return "", err
 	}
 
 	for i := 0; i < vm.Count; i++ {
-		outputTemplate, err := render(vmOutputTF, map[string]interface{}{
+		outputTemplate, err := helpers.Render(vmOutputTF, map[string]interface{}{
 			"vmGroupName":               vm.Name,
 			"index":                     i,
 			"publicIPAddressAllocation": vm.NetworkInfos[0].PublicIP == "static" || vm.NetworkInfos[0].PublicIP == "dynamic",
@@ -168,7 +168,7 @@ func NewVMTemplate(vm artifacts.VMGroup) (string, error) {
 }
 
 func NewVMInput(vm artifacts.VMGroup) (string, error) {
-	return render(vmTFVars, getVMTFVarsParams(vm))
+	return helpers.Render(vmTFVars, getVMTFVarsParams(vm))
 }
 
 func getVMTFParams(vm artifacts.VMGroup) map[string]interface{} {

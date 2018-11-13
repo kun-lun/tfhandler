@@ -52,11 +52,11 @@ var mysqlTFVars = []byte(`
 `)
 
 func NewMysqlTemplate(mysql artifacts.MysqlDatabase) (string, error) {
-	return render(mysqlTF, getMysqlTFParams(mysql))
+	return helpers.Render(mysqlTF, getMysqlTFParams(mysql))
 }
 
 func NewMysqlInput(mysql artifacts.MysqlDatabase) (string, error) {
-	return render(mysqlTFVars, getMysqlTFVarsParams(mysql))
+	return helpers.Render(mysqlTFVars, getMysqlTFVarsParams(mysql))
 }
 
 func getMysqlTFParams(mysql artifacts.MysqlDatabase) map[string]interface{} {
