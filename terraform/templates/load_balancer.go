@@ -91,14 +91,14 @@ var loadBalancerRuleTFVars = []byte(`
 func NewLoadBalancerTemplate(lb artifacts.LoadBalancer) (string, error) {
 	tf := ""
 
-	lbTF, err := render(loadBalancerTF, getLoadBalancerTFParams(lb))
+	lbTF, err := helpers.Render(loadBalancerTF, getLoadBalancerTFParams(lb))
 	if err != nil {
 		return "", err
 	}
 	tf += lbTF
 
 	for _, lbbap := range lb.BackendAddressPools {
-		lbbapTF, err := render(
+		lbbapTF, err := helpers.Render(
 			loadBalancerBackendAddressPoolTF,
 			getLoadBalancerBackendAddressPoolTFParams(lbbap, lb.Name))
 		if err != nil {
@@ -108,7 +108,7 @@ func NewLoadBalancerTemplate(lb artifacts.LoadBalancer) (string, error) {
 	}
 
 	for _, lbhp := range lb.HealthProbes {
-		lbhpTF, err := render(
+		lbhpTF, err := helpers.Render(
 			loadBalancerHealthProbeTF,
 			getLoadBalancerHealthProbeTFParams(lbhp, lb.Name),
 		)
@@ -119,7 +119,7 @@ func NewLoadBalancerTemplate(lb artifacts.LoadBalancer) (string, error) {
 	}
 
 	for _, lbr := range lb.Rules {
-		lbrTF, err := render(
+		lbrTF, err := helpers.Render(
 			loadBalancerRuleTF,
 			getLoadBalancerRuleTFParams(lbr, lb.Name),
 		)
@@ -135,14 +135,14 @@ func NewLoadBalancerTemplate(lb artifacts.LoadBalancer) (string, error) {
 func NewLoadBalancerInput(lb artifacts.LoadBalancer) (string, error) {
 	tfVars := ""
 
-	lbVars, err := render(loadBalancerTFVars, getLoadBalancerTFVarsParams(lb))
+	lbVars, err := helpers.Render(loadBalancerTFVars, getLoadBalancerTFVarsParams(lb))
 	if err != nil {
 		return "", err
 	}
 	tfVars += lbVars
 
 	for _, lbhp := range lb.HealthProbes {
-		lbhpVars, err := render(
+		lbhpVars, err := helpers.Render(
 			loadBalancerHealthProbeTFVars,
 			getLoadBalancerHealthProbeTFVarsParams(lbhp),
 		)
@@ -153,7 +153,7 @@ func NewLoadBalancerInput(lb artifacts.LoadBalancer) (string, error) {
 	}
 
 	for _, lbr := range lb.Rules {
-		lbrVars, err := render(
+		lbrVars, err := helpers.Render(
 			loadBalancerRuleTFVars,
 			getLoadBalancerRuleTFVarsParams(lbr),
 		)

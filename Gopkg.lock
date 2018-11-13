@@ -19,15 +19,17 @@
 
 [[projects]]
   branch = "draft"
-  digest = "1:70a3b9fcba11468298ff717e6731c4f3e21a0cfe12ea7bcf4c1f8b205bf27335"
+  digest = "1:dc31e7ee5608c3f134db34ea21f21b4019dcb2590e0a6df21c03101d0dd048cc"
   name = "github.com/kun-lun/common"
   packages = [
+    "errors",
     "fileio",
+    "helpers",
     "logger",
     "storage",
   ]
   pruneopts = "UT"
-  revision = "a3f10be08cd68f9c278aeb51b463b0248c23d7a7"
+  revision = "cf5765a53f83c9cd20042875e21df63933a28a20"
 
 [[projects]]
   branch = "master"
@@ -78,6 +80,7 @@
     "github.com/coreos/go-semver/semver",
     "github.com/kun-lun/artifacts/pkg/apis",
     "github.com/kun-lun/common/fileio",
+    "github.com/kun-lun/common/helpers",
     "github.com/kun-lun/common/logger",
     "github.com/kun-lun/common/storage",
     "github.com/spf13/afero",
