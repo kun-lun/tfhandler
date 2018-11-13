@@ -2,6 +2,7 @@ package templates
 
 import (
 	"strings"
+	"github.com/kun-lun/common/helpers"
 	artifacts "github.com/kun-lun/artifacts/pkg/apis"
 )
 

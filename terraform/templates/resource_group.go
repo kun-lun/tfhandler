@@ -1,5 +1,9 @@
 package templates
 
+import (
+	"github.com/kun-lun/common/helpers"
+)
+
 var resourceGroupTF = []byte(`
 variable "resource_group_name" {}
 variable "location" {}

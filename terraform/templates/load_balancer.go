@@ -1,6 +1,9 @@
 package templates
 
-import artifacts "github.com/kun-lun/artifacts/pkg/apis"
+import (
+	"github.com/kun-lun/common/helpers"
+	artifacts "github.com/kun-lun/artifacts/pkg/apis"
+)
 
 var loadBalancerTF = []byte(`
 resource "azurerm_public_ip" "{{.lbName}}_public_ip" {
