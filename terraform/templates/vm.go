@@ -8,10 +8,11 @@ import (
 
 var vmTF = []byte(`
 resource "azurerm_availability_set" "{{.vmGroupName}}_as" {
-	name                = "${var.env_name}-{{.vmGroupName}}-as"
-	location            = "${var.location}"
-	resource_group_name = "${azurerm_resource_group.kunlun_resource_group.name}"
-	managed				= "true"
+	name                        = "${var.env_name}-{{.vmGroupName}}-as"
+	location                    = "${var.location}"
+	resource_group_name         = "${azurerm_resource_group.kunlun_resource_group.name}"
+	managed                     = "true"
+	platform_fault_domain_count = 2
 }
   
 {{if .publicIPAddressAllocation -}}
